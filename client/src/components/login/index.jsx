@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
-import { usePostLoginMutation, usePostSignUpMutation } from "@/state/api";
+import { usePostLoginMutation, usePostSignUpMutation, usePostTokenLoginMutation } from "@/state/api";
 
 const Login = ({ setUser, setSecret }) => {
   const [isRegister, setIsRegister] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [token, setToken] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [triggerLogin, resultLogin] = usePostLoginMutation();
   const [triggerSignUp, resultSignUp] = usePostSignUpMutation();
+  const [triggerToken, resultToken] = usePostTokenLoginMutation();
 
   const handleLogin = () => {
     triggerLogin({ username, password });
@@ -16,6 +18,21 @@ const Login = ({ setUser, setSecret }) => {
   const handleRegister = () => {
     triggerSignUp({ username, password });
   };
+
+  const handleToken = () => {
+    triggerToken({ token });
+  };
+
+  useEffect(() => {
+    if (resultToken.data) {
+      const { username, secret, avatar, response } = resultToken.data;
+      setUser(username);
+      setSecret(secret);
+    } else if (resultToken.error) {
+      setErrorMessage("Token failed. Please check your credentials.");
+    }
+  }, [resultToken.data, resultToken.error]);
+
 
   useEffect(() => {
     if (resultLogin.data?.response) {
@@ -58,6 +75,13 @@ const Login = ({ setUser, setSecret }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          <input
+            className="login-input"
+            type="text"
+            placeholder="Token"
+            value={token}
+            onChange={(e) => setToken(e.target.value)}
+          />
         </div>
 
         {errorMessage && <p className="error-message">{errorMessage}</p>}
@@ -72,6 +96,14 @@ const Login = ({ setUser, setSecret }) => {
               Login
             </button>
           )}
+        </div>
+
+        <div className="login-actions">
+
+            <button type="button" onClick={handleToken}>
+              Token
+            </button>
+ 
         </div>
       </div>
     </div>
