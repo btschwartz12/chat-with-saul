@@ -32,7 +32,7 @@ const Login = ({ setUser, setSecret }) => {
   return (
     <div className="login-page">
       <div className="login-container">
-        <h2 className="title">BLISS CHAT</h2>
+        <h2 className="title">CHAT WITH SAUL</h2>
 
         <div>
           <input
